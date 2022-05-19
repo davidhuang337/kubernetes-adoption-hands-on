@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod
+  labels:
+    app: nginx
+spec:
+  containers:
+  - name: nginx
+    image: nginx:1.21.6
+    volumeMounts:
+      - name: nginx-share-logs
+        mountPath: /var/log/nginx/
+      - name: nginx-conf
+        mountPath: /etc/nginx/
+    resources:
+      requests:
+        memory: "64Mi"
+        cpu: "250m"
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
+    restartPolicy: Always
+  - name: fluentd
+    image: fluentd:v1.14-1
+    volumeMounts:
+    - name: nginx-share-logs
+      mountPath: /logs
+    - name: fluentd-conf
+      mountPath: /fluentd/etc
+    resources:
+      requests:
+        memory: "64Mi"
+        cpu: "250m"
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
+    restartPolicy: Always
+  volumes:
+    - name : nginx-share-logs
+      emptyDir: {}
+    - name : nginx-conf
+      configMap:
+        name : nginx-configmap
+        items:
+          - key: nginx.conf
+            path: nginx.conf 
+    - name : fluentd-conf
+      configMap:
+        name : fluentd-configmap
+        items:
+          - key: fluentd.conf
+            path: fluent.conf

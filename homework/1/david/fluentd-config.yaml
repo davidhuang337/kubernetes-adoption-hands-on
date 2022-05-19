@@ -1,0 +1,14 @@
+apiVersion: v1
+data:
+  fluentd.conf: "<source>\r\n  type tail\r\n  path /logs/**/access.log\r\n  tag nginx.access\r\n
+    \ format nginx\r\n</source>\r\n\r\n<source>\r\n  @type tail\r\n  format /^(?<time>\\d{4}/\\d{2}/\\d{2}
+    \\d{2}:\\d{2}:\\d{2}) \\[(?<log_level>\\w+)\\] (?<pid>\\d+).(?<tid>\\d+): (?<message>.*)$/\r\n
+    \ tag nginx.error\r\n  path /logs/**/error.log\r\n</source>\r\n\r\n<match nginx.access>\r\n
+    \ @type stdout\r\n</match>\r\n\r\n<match nginx.error>\r\n  @type stdout\r\n</match>"
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2022-05-15T13:50:39Z"
+  name: fluentd-configmap
+  namespace: david
+  resourceVersion: "20396"
+  uid: 6a03e331-c363-485b-b8f0-e4abbd58e718

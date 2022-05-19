@@ -1,0 +1,26 @@
+apiVersion: v1
+data:
+  nginx.conf: "user  nginx;\r\nworker_processes  1;\r\n\r\nerror_log  /var/log/nginx/error.log
+    warn;\r\npid        /var/run/nginx.pid;\r\n\r\nevents {\r\n    worker_connections
+    \ 1024;\r\n}\r\n\r\nhttp {\r\n    log_format  main  '$remote_addr - $remote_user
+    [$time_local] \"$request\" '\r\n                      '$status $body_bytes_sent
+    \"$http_referer\" '\r\n                      '\"$http_user_agent\" \"$http_x_forwarded_for\"';\r\n\r\n
+    \   # Path to access.log & error.log\r\n    access_log /var/log/nginx/access.log
+    \ main;\r\n    error_log /var/log/nginx/error.log  warn;\r\n\r\n    sendfile        on;\r\n
+    \   keepalive_timeout  65;\r\n    gzip  on;\r\n\r\n    upstream backend {\r\n
+    \       # must match the target service name\r\n        server wordpress-service.david:80;\r\n
+    \   }\r\n\r\n    server {\r\n        listen       80;\r\n        location / {\r\n
+    \           # $http_host is the host name that users seen on the browser URL\r\n
+    \           # and it equals to `HTTP_HOST` request header.\r\n            proxy_set_header
+    Host $http_host;\r\n\r\n            # You have to change this according to your
+    setup.\r\n            proxy_pass http://wordpress-service;\r\n\r\n
+    \           # Modify `Location` of 301 or 302 HTTP response, so\r\n            #
+    that the browser will follow the correct location.\r\n            proxy_redirect
+    ~^http://[^/]*/(.*) http://$http_host/$1;\r\n        }\r\n    }\r\n}"
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2022-05-15T13:46:51Z"
+  name: nginx-configmap
+  namespace: david
+  resourceVersion: "20350"
+  uid: 3f643915-c212-405b-b057-d0224d7a85da

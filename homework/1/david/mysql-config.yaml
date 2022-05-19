@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysql-secret
+type: Opaque
+data:
+  root_passwd: ZGF2aWRfMTIzNA==
+  user: ZGF2aWQ=
+  user_passwd: ZGF2aWRfMTIzNA==
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-configmap
+data:
+  db_host: mysql-service
+  db_name: david
